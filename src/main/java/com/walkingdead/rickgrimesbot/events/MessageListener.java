@@ -1,6 +1,7 @@
 package com.walkingdead.rickgrimesbot.events;
 
 import com.walkingdead.rickgrimesbot.BotConfiguration;
+import com.walkingdead.rickgrimesbot.ChatGPT;
 import discord4j.core.object.entity.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,12 +55,24 @@ public abstract class MessageListener {
     };
 
     public Mono<Void> processCommand(Message eventMessage) {
-        log.info("Input message is: " + eventMessage.getContent());
+        ChatGPT GPT = new ChatGPT();
+        String reply = null;
+        String inputMessage = eventMessage.getContent();
+        log.info("Input message is: " + inputMessage);
+
+        try {
+            reply = GPT.sendMessageToChatGPT("Pretend you are Rick Grimes from the walking dead answering this question, " +
+                    "reply without any fluff before the reply: " + inputMessage);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        String finalReply = reply;
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
-                .filter(message -> message.getContent().equalsIgnoreCase("!carl"))
+                //.filter(message -> message.getContent().equalsIgnoreCase("!rick"))  commented for now until we can add a way to call the bot with a command for the message
                 .flatMap(Message::getChannel)
-                .flatMap(channel -> channel.createMessage(getRandomQuote()))
+                .flatMap(channel -> channel.createMessage(finalReply))
                 .then();
     }
 
