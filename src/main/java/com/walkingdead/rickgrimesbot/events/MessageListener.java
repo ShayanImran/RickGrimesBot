@@ -1,11 +1,16 @@
 package com.walkingdead.rickgrimesbot.events;
 
+import com.walkingdead.rickgrimesbot.BotConfiguration;
 import discord4j.core.object.entity.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.util.Random;
 
 public abstract class MessageListener {
+
+    private static final Logger log = LoggerFactory.getLogger(BotConfiguration.class);
 
     private static final String[] QUOTES = {
             "We don't kill the living.",
@@ -49,6 +54,7 @@ public abstract class MessageListener {
     };
 
     public Mono<Void> processCommand(Message eventMessage) {
+        log.info("Input message is: " + eventMessage.getContent());
         return Mono.just(eventMessage)
                 .filter(message -> message.getAuthor().map(user -> !user.isBot()).orElse(false))
                 .filter(message -> message.getContent().equalsIgnoreCase("!carl"))
@@ -60,6 +66,7 @@ public abstract class MessageListener {
     private String getRandomQuote() {
         Random random = new Random();
         int randomIndex = random.nextInt(QUOTES.length);
+        log.info("Quote is: " + QUOTES[randomIndex]);
         return QUOTES[randomIndex];
     }
 }
