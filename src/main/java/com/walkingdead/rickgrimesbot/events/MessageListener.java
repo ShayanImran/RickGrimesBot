@@ -22,8 +22,7 @@ public abstract class MessageListener {
         log.info("Input message is: " + inputMessage);
 
         try {
-            reply = chatGPT.sendMessageToChatGPT("Pretend you are Rick Grimes from the walking dead answering this question, " +
-                    "reply without any fluff before the reply: " + inputMessage);
+            reply = chatGPT.sendMessageToChatGPT("Reply as Rick Grimes from the walking dead, keep it only 1-2 sentences:" + inputMessage);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
